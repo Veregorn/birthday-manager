@@ -1,20 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import BirthdayList from "./screens/BirthdayList";
+import BirthdayDetails from "./screens/BirthdayDetails";
+import CreateBirthday from "./screens/CreateBirthday";
+import ManageGuests from "./screens/ManageGuests";
+
+// Creamos un Stack Navigator
+const Stack = createStackNavigator();
 
 export default function App() {
+  // Creamos un estado para guardar los cumpleaños
+  const [birthdays, setBirthdays] = useState([]);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="BirthdayList">
+        <Stack.Screen name="BirthdayList">
+          {(props) => (
+            <BirthdayList
+              {...props}
+              birthdays={birthdays}
+              setBirthdays={setBirthdays}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="CreateBirthday">
+          {(props) => (
+            <CreateBirthday
+              {...props}
+              birthdays={birthdays}
+              setBirthdays={setBirthdays}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="BirthdayDetails" component={BirthdayDetails} />
+        <Stack.Screen name="ManageGuests" component={ManageGuests} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
