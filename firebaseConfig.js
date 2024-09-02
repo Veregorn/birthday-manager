@@ -1,5 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
@@ -10,12 +13,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBI8qp7PC2isi63t3n-VVGAwyK1FcQR-Ls",
-  authDomain: "birthday-manager-20737.firebaseapp.com",
-  projectId: "birthday-manager-20737",
-  storageBucket: "birthday-manager-20737.appspot.com",
-  messagingSenderId: "70493404941",
-  appId: "1:70493404941:web:8eefa8aa533eb7bb04ba44",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
