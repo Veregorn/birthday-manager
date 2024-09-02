@@ -1,10 +1,11 @@
-import React from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, Button, FlatList } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import firestore from "firebase/firestore";
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("El nombre es obligatorio"),
@@ -12,14 +13,32 @@ const validationSchema = yup.object().shape({
 });
 
 const CreateBirthday = ({ navigation, setBirthdays, birthdays }) => {
+  const [guests, setGuests] = useState([]);
+  const [guestName, setGuestName] = useState("");
+
+  const handleAddGuest = () => {
+    if (guestName.trim() !== "") {
+      setGuests([
+        ...guests,
+        {
+          id: Date.now().toString(),
+          name: guestName,
+          attending: false,
+          paid: false,
+        },
+      ]);
+      setGuestName("");
+    }
+  };
+
   const handleFormSubmit = (values) => {
-    const newBirthday = {
+    /* const newBirthday = {
       id: Date.now().toString(),
       name: values.name,
       location: values.location,
       date: format(values.date, "dd/MM/yyyy", { locale: es }),
       time: format(values.time, "HH:mm"),
-      attendees: [],
+      attendees: guests,
     };
 
     try {
@@ -29,7 +48,14 @@ const CreateBirthday = ({ navigation, setBirthdays, birthdays }) => {
       navigation.navigate("BirthdayList");
     } catch (error) {
       console.log("Error while updating birthdays list:", error);
-    }
+    } */
+    firestore.collection("birthdays").add({
+      name: values.name,
+      location: values.location,
+      date: format(values.date, "dd/MM/yyyy", { locale: es }),
+      time: format(values.time, "HH:mm"),
+      attendees: guests,
+    });
   };
 
   return (
@@ -87,6 +113,19 @@ const CreateBirthday = ({ navigation, setBirthdays, birthdays }) => {
             value={values.location}
           />
           {errors.location && <Text>{errors.location}</Text>}
+
+          <Text>Invitados</Text>
+          <TextInput
+            onChangeText={setGuestName}
+            value={guestName}
+            placeholder="Nombre del invitado"
+          />
+          <Button title="Añadir Invitado" onPress={handleAddGuest} />
+          <FlatList
+            data={guests}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => <Text>{item.name}</Text>}
+          />
 
           <Button onPress={handleSubmit} title="Crear Cumpleaños" />
         </View>

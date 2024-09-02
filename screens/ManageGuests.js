@@ -1,9 +1,25 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, Button } from "react-native";
+import { View, Text, FlatList, Button, TextInput } from "react-native";
 
 const ManageGuests = ({ route, navigation }) => {
   const { birthday } = route.params;
   const [guests, setGuests] = useState(birthday.attendees);
+  const [guestName, setGuestName] = useState("");
+
+  const handleAddGuest = () => {
+    if (guestName.trim() !== "") {
+      setGuests([
+        ...guests,
+        {
+          id: Date.now().toString(),
+          name: guestName,
+          attending: false,
+          paid: false,
+        },
+      ]);
+      setGuestName("");
+    }
+  };
 
   const confirmAttendance = (guestId) => {
     const updatedGuests = guests.map((guest) =>
@@ -29,6 +45,12 @@ const ManageGuests = ({ route, navigation }) => {
         renderItem={({ item }) => (
           <View>
             <Text>{item.name}</Text>
+            <Text>
+              {item.attending
+                ? "Asistencia Confirmada"
+                : "Asistencia Pendiente"}
+            </Text>
+            <Text>{item.paid ? "Pago Realizado" : "Pago Pendiente"}</Text>
             <Button
               title={
                 item.attending
@@ -46,10 +68,13 @@ const ManageGuests = ({ route, navigation }) => {
           </View>
         )}
       />
-      <Button
-        title="Añadir Invitado"
-        onPress={() => navigation.navigate("createGuest", { birthday })}
+      <Text>Nombre del Invitado</Text>
+      <TextInput
+        onChangeText={setGuestName}
+        value={guestName}
+        placeholder="Nombre del invitado"
       />
+      <Button title="Añadir Invitado" onPress={() => handleAddGuest()} />
     </View>
   );
 };

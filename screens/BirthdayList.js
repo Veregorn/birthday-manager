@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Button, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-const BirthdayList = ({ birthdays, setBirthdays }) => {
+const BirthdayList = ({ birthdays }) => {
   const navigation = useNavigation();
 
   return (
