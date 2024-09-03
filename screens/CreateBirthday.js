@@ -5,7 +5,8 @@ import * as yup from "yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import firestore from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("El nombre es obligatorio"),
@@ -31,31 +32,22 @@ const CreateBirthday = ({ navigation, setBirthdays, birthdays }) => {
     }
   };
 
-  const handleFormSubmit = (values) => {
-    /* const newBirthday = {
-      id: Date.now().toString(),
-      name: values.name,
-      location: values.location,
-      date: format(values.date, "dd/MM/yyyy", { locale: es }),
-      time: format(values.time, "HH:mm"),
-      attendees: guests,
-    };
-
+  const handleFormSubmit = async (values) => {
     try {
-      const updatedBirthdays = Array.isArray(birthdays) ? [...birthdays] : [];
-      updatedBirthdays.push(newBirthday);
-      setBirthdays(updatedBirthdays);
+      const newBirthday = {
+        name: values.name,
+        location: values.location,
+        date: format(values.date, "dd/MM/yyyy", { locale: es }),
+        time: format(values.time, "HH:mm"),
+        attendees: guests,
+      };
+
+      const docRef = await addDoc(collection(db, "birthdays"), newBirthday);
+      setBirthdays([...birthdays, { ...newBirthday, id: docRef.id }]);
       navigation.navigate("BirthdayList");
     } catch (error) {
       console.log("Error while updating birthdays list:", error);
-    } */
-    firestore.collection("birthdays").add({
-      name: values.name,
-      location: values.location,
-      date: format(values.date, "dd/MM/yyyy", { locale: es }),
-      time: format(values.time, "HH:mm"),
-      attendees: guests,
-    });
+    }
   };
 
   return (

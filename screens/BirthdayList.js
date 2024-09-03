@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Button, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-const BirthdayList = ({ birthdays }) => {
+const BirthdayList = ({ birthdays, onDeleteBirthday }) => {
   const navigation = useNavigation();
 
   return (
@@ -23,6 +23,7 @@ const BirthdayList = ({ birthdays }) => {
                 navigation.navigate("BirthdayDetails", { birthday: item })
               }
             />
+            <Button title="Borrar" onPress={() => onDeleteBirthday(item.id)} />
           </View>
         )}
       />

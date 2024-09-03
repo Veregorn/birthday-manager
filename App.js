@@ -6,7 +6,7 @@ import BirthdayDetails from "./screens/BirthdayDetails";
 import CreateBirthday from "./screens/CreateBirthday";
 import ManageGuests from "./screens/ManageGuests";
 import { db } from "./firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 // Creamos un Stack Navigator
 const Stack = createStackNavigator();
@@ -27,6 +27,16 @@ export default function App() {
     }
   };
 
+  // Manejo del borrado de un cumpleaños
+  const handleDeleteBirthday = async (id) => {
+    try {
+      await deleteDoc(doc(db, "birthdays", id));
+      setBirthdays(birthdays.filter((birthday) => birthday.id !== id));
+    } catch (error) {
+      console.log("Error while deleting birthday:", error);
+    }
+  };
+
   // Obtenemos la lista de cumpleaños al cargar la aplicación
   useEffect(() => {
     fetchBirthdays();
@@ -36,7 +46,13 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="BirthdayList">
         <Stack.Screen name="BirthdayList">
-          {(props) => <BirthdayList {...props} birthdays={birthdays} />}
+          {(props) => (
+            <BirthdayList
+              {...props}
+              birthdays={birthdays}
+              onDeleteBirthday={handleDeleteBirthday}
+            />
+          )}
         </Stack.Screen>
         <Stack.Screen name="CreateBirthday">
           {(props) => (
